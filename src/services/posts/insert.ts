@@ -5,8 +5,10 @@ import {
   Post,
 } from "../../models";
 import { clientConnection } from "../../server";
-import { AverageRuntimeActions } from "../average-runtime/average-runtime-actions";
-import { AverageRuntimeWrapper } from "../average-runtime/average-runtime-wrapper";
+import {
+  AverageRuntimeActions,
+  AverageRuntimeWrapper,
+} from "../average-runtime";
 
 const INSERT_METHOD = "insert-post";
 
@@ -18,12 +20,13 @@ const insertAverageRuntime = new AverageRuntimeActions(
   saveStatisticsQuery
 );
 
-export const insertList = (post: Post) => {
-  const averageRuntimeWrapper = new AverageRuntimeWrapper(
-    insertAverageRuntime,
-    INSERT_METHOD,
-    () => PostsQuery.insert(clientConnection, post)
-  );
+const averageRuntimeWrapper = new AverageRuntimeWrapper(
+  insertAverageRuntime,
+  INSERT_METHOD
+);
 
-  return averageRuntimeWrapper.execute();
+export const insert = (post: Post) => {
+  return averageRuntimeWrapper.execute(() =>
+    PostsQuery.insert(clientConnection, post)
+  );
 };

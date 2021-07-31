@@ -1,12 +1,12 @@
 import { AverageRuntimeType } from "../../models";
-import { AverageRuntime, Runtime } from "./types";
+import { AverageRuntimeBaseActions, Runtime } from "./types";
 
 const runtimeDefinition = {
   timesNumber: 0,
   time: 0,
 };
 
-export class AverageRuntimeActions implements AverageRuntime {
+export class AverageRuntimeActions implements AverageRuntimeBaseActions {
   private methodName: string;
   private isCompleteSaving: boolean = true;
   private saveQuery: (averageRuntimeRow: AverageRuntimeType) => Promise<void>;
@@ -21,18 +21,23 @@ export class AverageRuntimeActions implements AverageRuntime {
   }
 
   private save = async () => {
-    if (this.isCompleteSaving === false) {
-      return;
+    try {
+      if (this.isCompleteSaving === false) {
+        return;
+      }
+
+      this.isCompleteSaving = false;
+
+      await this.saveQuery({
+        methodName: this.methodName,
+        ...this.newRuntime,
+      });
+
+      this.newRuntime.time = 0;
+      this.newRuntime.timesNumber = 0;
+    } catch (error) {
+      console.error(error);
     }
-
-    this.isCompleteSaving = false;
-
-    await this.saveQuery({
-      methodName: this.methodName,
-      ...this.newRuntime,
-    });
-
-    this.newRuntime = runtimeDefinition;
   };
 
   append = async (time: number) => {

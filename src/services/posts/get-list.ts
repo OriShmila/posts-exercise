@@ -1,7 +1,9 @@
 import { PostsQuery, AverageRuntimeType, StatisticsQuery } from "../../models";
+import {
+  AverageRuntimeActions,
+  AverageRuntimeWrapper,
+} from "../average-runtime";
 import { clientConnection } from "../../server";
-import { AverageRuntimeActions } from "../average-runtime/average-runtime-actions";
-import { AverageRuntimeWrapper } from "../average-runtime/average-runtime-wrapper";
 
 const GET_METHOD = "get-post-list";
 
@@ -13,11 +15,13 @@ const getListAverageRuntime = new AverageRuntimeActions(
   saveStatisticsQuery
 );
 
-export const getPostList = (offset: number, limit: number) => {
-  const averageRuntimeWrapper = new AverageRuntimeWrapper(
-    getListAverageRuntime,
-    GET_METHOD,
-    () => PostsQuery.fetch(clientConnection, offset, limit)
+const averageRuntimeWrapper = new AverageRuntimeWrapper(
+  getListAverageRuntime,
+  GET_METHOD
+);
+
+export const getList = (offset?: number, limit?: number) => {
+  return averageRuntimeWrapper.execute(() =>
+    PostsQuery.fetch(clientConnection, limit, offset)
   );
-  return averageRuntimeWrapper.execute();
 };

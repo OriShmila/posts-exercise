@@ -1,21 +1,15 @@
 import Events from "events";
-import { AverageRuntime } from "./types";
+import { AverageRuntimeBaseActions } from "./types";
 
 const eventEmitter = new Events.EventEmitter();
 
 export class AverageRuntimeWrapper {
   private readonly COMPLETE_EXTENSION = "-complete";
   private methodName: string;
-  private avarageRuntime: AverageRuntime;
-  private executeCallback: any;
+  private avarageRuntime: AverageRuntimeBaseActions;
 
-  constructor(
-    averageRuntime: AverageRuntime,
-    methodName: string,
-    executeCallback: () => Promise<unknown>
-  ) {
+  constructor(averageRuntime: AverageRuntimeBaseActions, methodName: string) {
     this.methodName = methodName;
-    this.executeCallback = executeCallback;
     this.avarageRuntime = averageRuntime;
 
     this.initEvent();
@@ -33,10 +27,10 @@ export class AverageRuntimeWrapper {
 
     return (time[0] * 1e9 + time[1]) / 1e9;
   }
-  async execute() {
+  async execute(executeCallback: () => Promise<unknown>) {
     const startTime = process.hrtime();
 
-    const result = await this.executeCallback();
+    const result = await executeCallback();
     const time = this.calculateTime(startTime);
 
     this.appendAverageRuntime(time);

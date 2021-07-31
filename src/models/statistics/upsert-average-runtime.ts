@@ -1,6 +1,6 @@
 import { Pool } from "pg";
 
-export interface AverageRuntimeRow {
+export interface AverageRuntimeType {
   methodName: string;
   timesNumber: number;
   time: number;
@@ -8,7 +8,7 @@ export interface AverageRuntimeRow {
 
 export const upsertAverageRuntime = (
   clientConnection: Pool,
-  averageRuntimeRow: AverageRuntimeRow
+  averageRuntime: AverageRuntimeType
 ) => {
   clientConnection.query(
     `INSERT INTO posts_exercise.statistics(
@@ -20,10 +20,6 @@ export const upsertAverageRuntime = (
         / (statistics.times_number + $2),
         times_number = statistics.times_number + $2
         WHERE statistics.method_name = $3;`,
-    [
-      averageRuntimeRow.time,
-      averageRuntimeRow.timesNumber,
-      averageRuntimeRow.methodName,
-    ]
+    [averageRuntime.time, averageRuntime.timesNumber, averageRuntime.methodName]
   );
 };

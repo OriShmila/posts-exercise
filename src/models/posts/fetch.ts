@@ -1,11 +1,11 @@
 import { Pool } from "pg";
 
-export const fetch = (
+export const fetch = async (
   clientConnection: Pool,
   limit: number = null,
   offset: number = null
-) =>
-  clientConnection.query(
+) => {
+  const result = await clientConnection.query(
     `SELECT id, title, body, name as creator_name
         FROM posts_exercise.posts
         INNER JOIN posts_exercise.creators on creators.id = posts.creator_id
@@ -13,3 +13,6 @@ export const fetch = (
         LIMIT $1 OFFSET $2;`,
     [limit, offset]
   );
+
+  return result.rows;
+};

@@ -19,8 +19,7 @@ const port = process.env.PORT || 3000;
 export let clientConnection: Pool;
 (async () =>
   (clientConnection = await initDb(
-    process.env.POSTGRES_CONNECTION_STRING ||
-      `postgres://hcyiowfmiindvk:ff3188920c4c5c6aa9ccf2d46c4fa937636f1b05d98308746e26d05f37b8ca23@ec2-54-158-222-248.compute-1.amazonaws.com:5432/d1l4p8g32nnv2g`
+    process.env.POSTGRES_CONNECTION_STRING
   )))();
 
 server.use(express.json());
